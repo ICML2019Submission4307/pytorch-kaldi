@@ -9,12 +9,9 @@ The Pytorch-Kaldi repository can be found [here](https://github.com/mravanelli/p
 * [Introduction](#introduction)
 * [Prerequisites](#prerequisites)
 * [How to install](#how-to-install)
-* [Tutorials:](#timit-tutorial)
+* [Tutorials:](#TIMIT-tutorial)
   * [TIMIT tutorial](#timit-tutorial)
-  * [TED-LIUM tutorial](#librispeech-tutorial)
-* [Toolkit Overview:](#overview-of-the-toolkit-architecture)
-  * [Toolkit architecture](#overview-of-the-toolkit-architecture)
-  * [Configuration files](#description-of-the-configuration-files-)
+  * [TED-LIUM tutorial](#TED-LIUM-tutorial)
 
 
 ## Introduction
