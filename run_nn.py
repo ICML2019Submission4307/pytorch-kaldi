@@ -44,6 +44,7 @@ seq_model=is_sequential_dict(config,arch_dict)
 
 # Setting torch seed
 seed=int(config['exp']['seed'])
+seed=np.random.randint(seed)
 torch.manual_seed(seed)
 random.seed(seed)
 np.random.seed(seed)
@@ -53,7 +54,6 @@ np.random.seed(seed)
 use_cuda=strtobool(config['exp']['use_cuda'])
 save_gpumem=strtobool(config['exp']['save_gpumem'])
 multi_gpu=strtobool(config['exp']['multi_gpu'])
-is_production=strtobool(config['exp']['production'])
 
 to_do=config['exp']['to_do']
 info_file=config['exp']['out_info']
@@ -84,7 +84,8 @@ start_time = time.time()
 [cw_left_max,cw_right_max]=compute_cw_max(fea_dict)
 
 # Reading all the features and labels
-[data_name,data_set,data_end_index]=read_lab_fea(fea_dict,lab_dict,cw_left_max,cw_right_max,max_seq_length,is_production)
+[data_name,data_set,data_end_index]=read_lab_fea(fea_dict,lab_dict,cw_left_max,cw_right_max,max_seq_length)
+
 
 # Randomize if the model is not sequential
 if not(seq_model) and to_do!='forward':
@@ -133,6 +134,7 @@ if to_do=='forward':
             out_file=info_file.replace('.info','_'+forward_outs[out_id]+'_to_decode.ark')
         else:
             out_file=info_file.replace('.info','_'+forward_outs[out_id]+'.ark')
+            
         post_file[forward_outs[out_id]]=kaldi_io.open_or_fd(out_file,'wb')
 
 
@@ -163,6 +165,7 @@ loss_sum=0
 err_sum=0
 
 inp_dim=data_set.shape[1]
+
 for i in range(N_batches):   
     
     max_len=0
@@ -197,13 +200,17 @@ for i in range(N_batches):
             beg_snt=data_end_index[snt_index]
             snt_index=snt_index+1
 
+        
     # use cuda
     if use_cuda:
         inp=inp.cuda()
+   
+    # Forward input
+    outs_dict=forward_model(fea_dict,lab_dict,arch_dict,model,nns,costs,inp,inp_out_dict,max_len,batch_size,to_do,forward_outs)
+        
+
 
     if to_do=='train':
-        # Forward input, with autograd graph active
-        outs_dict=forward_model(fea_dict,lab_dict,arch_dict,model,nns,costs,inp,inp_out_dict,max_len,batch_size,to_do,forward_outs)
         
         for opt in optimizers.keys():
             optimizers[opt].zero_grad()
@@ -219,10 +226,6 @@ for i in range(N_batches):
         for opt in optimizers.keys():
             if not(strtobool(config[arch_dict[opt][0]]['arch_freeze'])):
                 optimizers[opt].step()
-    else:
-        with torch.no_grad(): # Forward input without autograd graph (save memory)
-            outs_dict=forward_model(fea_dict,lab_dict,arch_dict,model,nns,costs,inp,inp_out_dict,max_len,batch_size,to_do,forward_outs)
-
                 
     if to_do=='forward':
         for out_id in range(len(forward_outs)):
@@ -259,8 +262,6 @@ elapsed_time_chunk=time.time() - start_time
 loss_tot=loss_sum/N_batches
 err_tot=err_sum/N_batches
 
-# clearing memory
-del inp, outs_dict, data_set
 
 # save the model
 if to_do=='train':
