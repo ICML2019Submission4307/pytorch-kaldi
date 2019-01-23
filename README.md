@@ -15,15 +15,6 @@ The Pytorch-Kaldi repository can be found [here](https://github.com/mravanelli/p
 * [Toolkit Overview:](#overview-of-the-toolkit-architecture)
   * [Toolkit architecture](#overview-of-the-toolkit-architecture)
   * [Configuration files](#description-of-the-configuration-files-)
-* [FAQs:](#how-can-i-plug-in-my-model)
-  * [How can I plug-in my model?](#how-can-i-plug-in-my-model)
-  * [How can I tune the hyperparameters?](#how-can-i-tune-the-hyperparameters)
-  * [How can I use my own dataset?](#how-can-i-use-my-own-dataset)
-  * [How can I plug-in my own features?](#how-can-i-plug-in-my-own-features)
-  * [How can I contribute to the project?](#how-can-i-contribute-to-the-project)
-* [EXTRA:](#speech-recognition-from-the-raw-waveform-with-sincnet)  
-  * [Speech recognition from the raw waveform with SincNet](#speech-recognition-from-the-raw-waveform-with-sincnet)
-* [References](#references)
 
 
 ## Introduction
