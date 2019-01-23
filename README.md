@@ -11,7 +11,7 @@ The Pytorch-Kaldi repository can be found [here](https://github.com/mravanelli/p
 * [How to install](#how-to-install)
 * [Tutorials:](#timit-tutorial)
   * [TIMIT tutorial](#timit-tutorial)
-  * [Librispeech tutorial](#librispeech-tutorial)
+  * [TED-LIUM tutorial](#librispeech-tutorial)
 * [Toolkit Overview:](#overview-of-the-toolkit-architecture)
   * [Toolkit architecture](#overview-of-the-toolkit-architecture)
   * [Configuration files](#description-of-the-configuration-files-)
@@ -188,7 +188,7 @@ The best results are actually obtained with a more complex architecture that com
 
 You can directly compare your results with ours by going [here](https://bitbucket.org/mravanelli/pytorch-kaldi-exp-timit/src/master/). In this external repository, you can find all the folders containing the generated files.
 
-## Librispeech tutorial
+## TED-LIUM tutorial
 The steps to run PyTorch-Kaldi on the Librispeech dataset are similar to that reported above for TIMIT. The following tutorial is based on the *100h sub-set*, but it can be easily extended to the full dataset (960h).
 
 1. Run the Kaldi recipe for timit (at least until # decode using the tri4b model)
