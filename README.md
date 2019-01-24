@@ -114,29 +114,12 @@ python run_nn.py exp/TIMIT_MLP_basic/exp_files/train_TIMIT_tr_ep000_ck00.cfg
 In this way you “manually” run the training of the first chunk of speech an you can see all the errors directly from the standard output.
 
 
-8. At the end of training, the phone error rate (PER\%) is appended into the res.res file. To see more details on the decoding results, you can go into “decoding_test” in the output folder and take a look to the various files created.  For this specific example, we obtained the following *res.res* file.
+8. At the end of training, the phone error rate (PER\%) is appended into the res.res file. To see more details on the decoding results, you can go into “decoding_test” in the output folder and take a look to the various files created.  For this specific example, we obtained the following *res.res* file. The trained parameters are also saved in the "exp" folder under the network name in "parameters" as .mat files.
 
-If you want to change the features, you have to first compute them with the Kaldi toolkit. To compute fbank features, you have to open *$KALDI_ROOT/egs/timit/s5/run.sh* and compute them with the following lines:
-```
-feadir=fbank
 
-for x in train dev test; do
-  steps/make_fbank.sh --cmd "$train_cmd" --nj $feats_nj data/$x exp/make_fbank/$x $feadir
-  steps/compute_cmvn_stats.sh data/$x exp/make_fbank/$x $feadir
-done
-```
-
-Then, change the aforementioned configuration file with the new feature list.
-If you already have run the full timit Kaldi recipe, you can directly find the fmllr features in *$KALDI_ROOT/egs/timit/s5/data-fmllr-tri3*.
-If you feed the neural network with such features you should expect a substantial performance improvement, due to the adoption of the speaker adaptation.
-
-In the TIMIT_baseline folder, we propose several other examples of possible TIMIT baselines. Similarly to the previous example, you can run them by simply typing:
-```
-python run_exp.py $cfg_file
-```
 
 ## TED-LIUM tutorial
-The steps to run PyTorch-Kaldi on the Librispeech dataset are similar to that reported above for TIMIT. The following tutorial is based on the *100h sub-set*, but it can be easily extended to the full dataset (960h).
+The steps to run PyTorch-Kaldi on the Librispeech dataset are similar to that reported above for TIMIT. The following tutorial is based on TED-LIUM.
 
 1. Run the Kaldi recipe for timit (at least until # decode using the tri4b model)
 
@@ -168,40 +151,8 @@ steps/align_fmllr.sh --nj 10 data/test_clean data/lang exp/tri4b exp/tri4b_ali_t
 
 4. run the experiments with the following command:
 ```
-  python run_exp.py cfg/Librispeech_baselines/libri_MLP_fmllr.cfg.
+  python run_exp.py cfg/TEDLIUM/ICML_TEDLIUM.cfg
 ```
-
-If you would like to use a recurrent model you can use *libri_RNN_fmllr.cfg*, *libri_LSTM_fmllr.cfg*, *libri_GRU_fmllr.cfg*, or *libri_liGRU_fmllr.cfg*. The training of recurrent models might take some days (depending on the adopted GPU).  The performance obtained with the tgsmall graph are reported in the following table:
-
-| Model  | WER% | 
-| ------ | -----| 
-|  MLP  |  9.6 |
-|LSTM   |  8.6  |
-|GRU     | 8.6 | 
-|li-GRU| 8.6 |
-
-These results are obtained without adding a lattice rescoring (i.e., using only the *tgsmall* graph). You can improve the performance by adding lattice rescoring in this way (run it from the *kaldi_decoding_script* folder of Pytorch-Kaldi):
-```
-data_dir=/data/milatmp1/ravanelm/librispeech/s5/data/
-dec_dir=/u/ravanelm/pytorch-Kaldi-new/exp/libri_fmllr/decode_test_clean_out_dnn1/
-out_dir=/u/ravanelm/pytorch-kaldi-new/exp/libri_fmllr/
-
-steps/lmrescore_const_arpa.sh  $data_dir/lang_test_{tgsmall,fglarge} \
-          $data_dir/test_clean $dec_dir $out_dir/decode_test_clean_fglarge   || exit 1;
-```
-The final results obtaineed using rescoring (*fglarge*) are reported in the following table:
-
-| Model  | WER% |  
-| ------ | -----| 
-|  MLP  |  6.5 |
-|LSTM   |  6.4  |
-|GRU     | 6.3 | 
-|li-GRU| **6.2**  |
-
-
-You can take a look into the results obtained [here](https://bitbucket.org/mravanelli/pytorch-kaldi-exp-librispeech/src/master/).
-
-
 
 
 ## Overview of the toolkit architecture
