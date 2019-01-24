@@ -6,9 +6,9 @@ The Pytorch-Kaldi repository can be found [here](https://github.com/mravanelli/p
 [See a short introductory video on the PyTorch-Kaldi Toolkit](https://www.youtube.com/watch?v=VDQaf0SS4K0&t=2s)
 
 Changes to the file *neural_network.py* have been made to incorporate HCGS and quantization into training LSTM and MLP networks. Files added to PyTorch-Kaldi are:
-
-*HCGS.py* - Adds HCGS parameter layer
-**
+* *HCGS.py* - Adds HCGS parameter layer to the network
+* *hcgs.py* - Computes the HCGS mask
+* *cgs_base.py* - Used by *hcgs.py* to compute HCGS mask
 
 
 ## Table of Contents
