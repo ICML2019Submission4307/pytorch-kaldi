@@ -10,7 +10,7 @@ Changes to the file *neural_network.py* have been made to incorporate HCGS and q
 * *hcgs.py* - Computes the HCGS mask
 * *cgs_base.py* - Used by *hcgs.py* to compute HCGS mask
 * *binarized_modules.py* - Defines quantized linear layer for in-training quantization
-
+* *save_cgs_mat.py* - Saves HCGS mask and trainied weights after training is complete
 
 
 ## Table of Contents
