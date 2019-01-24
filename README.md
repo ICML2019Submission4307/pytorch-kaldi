@@ -90,7 +90,7 @@ To avoid errors make sure that all the paths in the cfg file exist. **Please, av
 
 7. Run the ASR experiment:
 ```
-python run_exp.py cfg/TIMIT_baselines/TIMIT_MLP_mfcc_basic.cfg
+python run_exp.py cfg/TIMIT_baselines/ICML_TIMIT.cfg
 ```
 
 This script starts a full ASR experiment and performs training, validation, forward, and decoding steps.  A progress bar shows the evolution of all the aforementioned phases. The script *run_exp.py* progressively creates the following files in the output directory:
@@ -114,25 +114,7 @@ python run_nn.py exp/TIMIT_MLP_basic/exp_files/train_TIMIT_tr_ep000_ck00.cfg
 In this way you “manually” run the training of the first chunk of speech an you can see all the errors directly from the standard output.
 
 
-8. At the end of training, the phone error rate (PER\%) is appended into the res.res file. To see more details on the decoding results, you can go into “decoding_test” in the output folder and take a look to the various files created.  For this specific example, we obtained the following *res.res* file:
-
-
-```
-ep=000 tr=['TIMIT_tr'] loss=3.398 err=0.721 valid=TIMIT_dev loss=2.268 err=0.591 lr_architecture1=0.080000 time(s)=86
-ep=001 tr=['TIMIT_tr'] loss=2.137 err=0.570 valid=TIMIT_dev loss=1.990 err=0.541 lr_architecture1=0.080000 time(s)=87
-ep=002 tr=['TIMIT_tr'] loss=1.896 err=0.524 valid=TIMIT_dev loss=1.874 err=0.516 lr_architecture1=0.080000 time(s)=87
-ep=003 tr=['TIMIT_tr'] loss=1.751 err=0.494 valid=TIMIT_dev loss=1.819 err=0.504 lr_architecture1=0.080000 time(s)=88
-ep=004 tr=['TIMIT_tr'] loss=1.645 err=0.472 valid=TIMIT_dev loss=1.775 err=0.494 lr_architecture1=0.080000 time(s)=89
-ep=005 tr=['TIMIT_tr'] loss=1.560 err=0.453 valid=TIMIT_dev loss=1.773 err=0.493 lr_architecture1=0.080000 time(s)=88
-.........
-ep=020 tr=['TIMIT_tr'] loss=0.968 err=0.304 valid=TIMIT_dev loss=1.648 err=0.446 lr_architecture1=0.002500 time(s)=89
-ep=021 tr=['TIMIT_tr'] loss=0.965 err=0.304 valid=TIMIT_dev loss=1.649 err=0.446 lr_architecture1=0.002500 time(s)=90
-ep=022 tr=['TIMIT_tr'] loss=0.960 err=0.302 valid=TIMIT_dev loss=1.652 err=0.447 lr_architecture1=0.001250 time(s)=88
-ep=023 tr=['TIMIT_tr'] loss=0.959 err=0.301 valid=TIMIT_dev loss=1.651 err=0.446 lr_architecture1=0.000625 time(s)=88
-%WER 18.1 | 192 7215 | 84.0 11.9 4.2 2.1 18.1 99.5 | -0.583 | /home/mirco/pytorch-kaldi-new/exp/TIMIT_MLP_basic5/decode_TIMIT_test_out_dnn1/score_6/ctm_39phn.filt.sys
-```
-
-The achieved PER(%) is 18.1%. Note that there could be some variability in the results, due to different initializations on different machines. We believe that averaging the performance obtained with different initialization seeds (i.e., change the field *seed* in the config file) is crucial for TIMIT since the natural performance variability might completely hide the experimental evidence. We noticed a standard deviation of about 0.2% for the TIMIT experiments.
+8. At the end of training, the phone error rate (PER\%) is appended into the res.res file. To see more details on the decoding results, you can go into “decoding_test” in the output folder and take a look to the various files created.  For this specific example, we obtained the following *res.res* file.
 
 If you want to change the features, you have to first compute them with the Kaldi toolkit. To compute fbank features, you have to open *$KALDI_ROOT/egs/timit/s5/run.sh* and compute them with the following lines:
 ```
@@ -152,22 +134,6 @@ In the TIMIT_baseline folder, we propose several other examples of possible TIMI
 ```
 python run_exp.py $cfg_file
 ```
-There are some examples with recurrent (TIMIT_RNN*,TIMIT_LSTM*,TIMIT_GRU*,TIMIT_LiGRU*) and CNN architectures (TIMIT_CNN*). We also propose a more advanced model (TIMIT_DNN_liGRU_DNN_mfcc+fbank+fmllr.cfg) where we used a combination of feed-forward and recurrent neural networks fed by a concatenation of mfcc, fbank, and fmllr features. Note that the latter configuration files correspond to the best architecture described in the reference paper. As you might see from the above-mentioned configuration files, we improve the ASR performance by including some tricks such as the monophone regularization (i.e., we jointly estimate both context-dependent and context-independent targets). The following table reports the results obtained by running the latter systems (average PER\%):
-
-| Model  | mfcc | fbank | fMLLR | 
-| ------ | -----| ------| ------| 
-|  Kaldi DNN Baseline | -----| ------| 18.5 |
-|  MLP  | 18.2 | 18.7 | 16.7 | 
-|  RNN  | 17.7 | 17.2 | 15.9 | 
-|LSTM| 15.1  | 14.3  |14.5  | 
-|GRU| 16.0 | 15.2|  14.9 | 
-|li-GRU| **15.5**  | **14.6**|  **14.2** | 
-
-Results show that, as expected, fMLLR features outperform MFCCs and FBANKs coefficients, thanks to the speaker adaptation process. Recurrent models significantly outperform the standard MLP one, especially when using LSTM, GRU, and Li-GRU architecture, that effectively address gradient vanishing through multiplicative gates. The best result *PER=$14.2$\%* is obtained with the [Li-GRU model](https://arxiv.org/pdf/1803.10225.pdf) [2,3], that is based on a single gate and thus saves 33% of the computations over a standard GRU. 
-
-The best results are actually obtained with a more complex architecture that combines MFCC, FBANK, and fMLLR features (see *cfg/TIMI_baselines/TIMIT_mfcc_fbank_fmllr_liGRU_best.cfg*). To the best of our knowledge, the **PER=13.8\%** achieved by the latter system yields the best-published performance on the TIMIT test-set. 
-
-You can directly compare your results with ours by going [here](https://bitbucket.org/mravanelli/pytorch-kaldi-exp-timit/src/master/). In this external repository, you can find all the folders containing the generated files.
 
 ## TED-LIUM tutorial
 The steps to run PyTorch-Kaldi on the Librispeech dataset are similar to that reported above for TIMIT. The following tutorial is based on the *100h sub-set*, but it can be easily extended to the full dataset (960h).
