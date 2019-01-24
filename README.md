@@ -358,7 +358,7 @@ hcgsh_block = 32,4
 hcgsh_drop = 75,75
 ```
 
-The sections *[architecture\*]* are used to specify the architectures of the neural networks involved in the ASR experiments. The field *arch_name* specifies the name of the architecture. The addition of *hcgs* option correspond hcgs block size for the first and second tier and the percentage drop of the connections in first and second tier. The *lstm_quant* and *param_quant* correspond to the quantization options for the network.
+The sections *[architecture\*]* are used to specify the architectures of the neural networks involved in the ASR experiments. The field *arch_name* specifies the name of the architecture. The addition of *hcgs* option correspond HCGS block size for the first and second tier and the percentage drop of the connections in first and second tier. The *lstm_quant* and *param_quant* correspond to the quantization options for the network.
 
 Since different neural networks can depend on a different set of hyperparameters, the user has to add the path of a proto file that contains the list of hyperparameters into the field *proto*.  For example,  the prototype file for a standard LSTM model contains the following fields:
 ```
