@@ -12,7 +12,7 @@ The Pytorch-Kaldi repository can be found [here](https://github.com/mravanelli/p
 * [Tutorials:](#TIMIT-tutorial)
   * [TIMIT tutorial](#timit-tutorial)
   * [TED-LIUM tutorial](#TED-LIUM-tutorial)
-* [Description of the configuration files](#Description of the configuration files)
+* [Description of the configuration files](#Description-of-the-configuration-files)
 
 
 ## Prerequisites
