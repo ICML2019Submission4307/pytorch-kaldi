@@ -1,5 +1,5 @@
 # Implementation of HCGS using PyTorch-Kaldi Speech Recognition Toolkit
-PyTorch-Kaldi is an open-source repository for developing state-of-the-art DNN/HMM speech recognition systems. The DNN part is managed by PyTorch, while feature extraction, label computation, and decoding are performed with the Kaldi toolkit. We are using the PyTorch-Kaldi toolkit to implement Hierarchical Coarse-Grain Sparisification of LSTM networks.
+PyTorch-Kaldi is an open-source repository for developing state-of-the-art DNN/HMM speech recognition systems. The DNN part is managed by PyTorch, while feature extraction, label computation, and decoding are performed with the Kaldi toolkit. We are using the PyTorch-Kaldi toolkit to implement Hierarchical Coarse-Grain Sparisification of LSTM networks. This GitHub repository is being used solely for the ICML submission and the authors of the paper do not have any association to the authors of PyTorch-Kaldi authors.
 
 The Pytorch-Kaldi repository can be found [here](https://github.com/mravanelli/pytorch-kaldi)
 
@@ -9,12 +9,9 @@ The Pytorch-Kaldi repository can be found [here](https://github.com/mravanelli/p
 * [Introduction](#introduction)
 * [Prerequisites](#prerequisites)
 * [How to install](#how-to-install)
-* [Tutorials:](#timit-tutorial)
+* [Tutorials:](#TIMIT-tutorial)
   * [TIMIT tutorial](#timit-tutorial)
-  * [TED-LIUM tutorial](#librispeech-tutorial)
-* [Toolkit Overview:](#overview-of-the-toolkit-architecture)
-  * [Toolkit architecture](#overview-of-the-toolkit-architecture)
-  * [Configuration files](#description-of-the-configuration-files-)
+  * [TED-LIUM tutorial](#TED-LIUM-tutorial)
 
 
 ## Introduction
