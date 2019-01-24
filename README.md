@@ -113,16 +113,6 @@ This script starts a full ASR experiment and performs training, validation, forw
 
 **Note that you can stop the experiment at any time.** If you run again the script it will automatically start from the last chunk correctly processed. The training could take a couple of hours, depending on the available GPU.
 
-**Debug:** If you run into some errors, we suggest to do the following checks:
-1.	Take a look into the standard output.
-2.	If it is not helpful, take a look into the log.log file.
-3.	If the error is still not clear, run:
-```
-python run_nn.py exp/TIMIT_MLP_basic/exp_files/train_TIMIT_tr_ep000_ck00.cfg
-```
-In this way you “manually” run the training of the first chunk of speech an you can see all the errors directly from the standard output.
-
-
 8. At the end of training, the phone error rate (PER\%) is appended into the res.res file. To see more details on the decoding results, you can go into “decoding_test” in the output folder and take a look to the various files created.  For this specific example, we obtained the following *res.res* file. The trained parameters are also saved in the "exp" folder under the network name in "parameters" as .mat files.
 
 
