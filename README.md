@@ -12,6 +12,7 @@ The Pytorch-Kaldi repository can be found [here](https://github.com/mravanelli/p
 * [Tutorials:](#TIMIT-tutorial)
   * [TIMIT tutorial](#timit-tutorial)
   * [TED-LIUM tutorial](#TED-LIUM-tutorial)
+* [Description of the configuration files](#Description of the configuration files)
 
 
 ## Prerequisites
@@ -153,21 +154,6 @@ steps/align_fmllr.sh --nj 10 data/test_clean data/lang exp/tri4b exp/tri4b_ali_t
 ```
   python run_exp.py cfg/TEDLIUM/ICML_TEDLIUM.cfg
 ```
-
-
-## Overview of the toolkit architecture
-The main script to run an ASR experiment is **run_exp.py**. This python script performs training, validation, forward, and decoding steps.  Training is performed over several epochs, that progressively process all the training material with the considered neural network.
-After each training epoch, a validation step is performed to monitor the system performance on *held-out* data. At the end of training, the forward phase is performed by computing the posterior probabilities of the specified test dataset. The posterior probabilities are normalized by their priors (using a count file) and stored into an ark file. A decoding step is then performed to retrieve the final sequence of words uttered by the speaker in the test sentences.
-
-The *run_exp.py* script takes in input a global config file (e.g., *cfg/TIMIT_MLP_mfcc.cfg*) that specifies all the needed options to run a full experiment. The code *run_exp.py* calls for  **run_nn.py** that performs training, validation, and forward operations on each chunk of data.
-The code *run_nn.py* takes in input a chunk-specific config file (e.g, *run_nn.py exp/TIMIT_MLP_mfcc/exp_files/train_TIMIT_tr+TIMIT_dev_ep000_ck00.cfg*) that specifies all the needed parameters for running a single-chunk experiment. The run_nn.py outputs some info filles (e.g., *exp/TIMIT_MLP_mfcc/exp_files/train_TIMIT_tr+TIMIT_dev_ep000_ck00.info*) that summarize losses and errors of the processed chunk.
-
-The results are summarized into the *res.res* files, while errors and warnings are redirected into the *log.log* file.
-
-*Why run_nn.py*?
-The current architecture implements single-chunk operations in a different python script (*run_nn.py*). In principle, all these operations could have been implemented within the main *run_exp.py* script.  We used a separate script for the following reasons:
-- in many clusters, the job priority is assigned according to the estimated time required by the script to complete the job. PyTorch-Kaldi allows running new jobs for every processed chunk using the “cmd” field in the global config file (cmd=”qsub -ngpu=1 -walltime=00:00:10”), allowing users to specify low wall-times.
-- Having two separate scripts allows an easier debug. For instance, a single chunk operation can be directly run with *run_nn.py train_TIMIT_tr+TIMIT_dev_ep000_ck00.cfg* without running the run_exp.py from scratch.
 
 
 ## Description of the configuration files:
