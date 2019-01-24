@@ -14,22 +14,6 @@ The Pytorch-Kaldi repository can be found [here](https://github.com/mravanelli/p
   * [TED-LIUM tutorial](#TED-LIUM-tutorial)
 
 
-## Introduction
-The PyTorch-Kaldi project aims to bridge the gap between the Kaldi and the PyTorch toolkits, trying to inherit the efficiency of Kaldi and the flexibility of PyTorch. PyTorch-Kaldi is not only a simple interface between these software, but it embeds several useful features for developing modern speech recognizers. For instance, the code is specifically designed to naturally plug-in user-defined acoustic models. As an alternative, users can exploit several pre-implemented neural networks that can be customized using intuitive configuration files. PyTorch-Kaldi supports multiple feature and label streams as well as combinations of neural networks, enabling the use of complex neural architectures. The toolkit is publicly-released along with a rich documentation and is designed to properly work locally or on HPC clusters.
-
-Some features of the new version of the PyTorch-Kaldi toolkit:
-
-- Easy interface with Kaldi.
-- Easy plug-in of user-defined models.
-- Several pre-implemented models (MLP, CNN, RNN, LSTM, GRU, Li-GRU, SincNet).
-- Natural implementation of complex models based on multiple features, labels, and neural architectures.
-- Easy and flexible configuration files.
-- Automatic recovery from the last processed chunk.
-- Automatic chunking and context expansions of the input features.
-- Multi-GPU training.
-- Designed to work locally or on HPC clusters.
-- Tutorials on TIMIT and Librispeech Datasets.
-
 ## Prerequisites
 1. If not already done, install Kaldi (http://kaldi-asr.org/). As suggested during the installation, do not forget to add the path of the Kaldi binaries into $HOME/.bashrc. For instace, make sure that .bashrc contains the following paths:
 ```
