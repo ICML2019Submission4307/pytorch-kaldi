@@ -161,7 +161,7 @@ There are two types of config files (global and chunk-specific cfg files). They 
 The global file contains several sections, that specify all the main steps of a speech recognition experiments (training, validation, forward, and decoding).
 The structure of the config file is described in a prototype file (see for instance *proto/global.proto*) that not only lists all the required sections and fields but also specifies the type of each possible field. For instance, *N_ep=int(1,inf)* means that the fields *N_ep* (i.e, number of training epochs) must be an integer ranging from 1 to inf. Similarly, *lr=float(0,inf)* means that the lr field (i.e., the learning rate) must be a float ranging from 0 to inf. Any attempt to write a config file not compliant with these specifications will raise an error.
 
-Let's now try to open a config file (e.g., *cfg/TIMIT_baselines/TIMIT_MLP_mfcc_basic.cfg*) and let's describe the main sections:
+Let's now try to open a config file (e.g., *cfg/TIMIT/ICML_TIMIT.cfg*) and let's describe the main sections:
 
 ```
 [cfg_proto]
@@ -174,12 +174,12 @@ The current version of the config file first specifies the paths of the global a
 [exp]
 cmd = 
 run_nn_script = run_nn.py
-out_folder = exp/TIMIT_MLP_basic5
-seed = 1234
+out_folder = exp/TIMIT_LSTM_fmllr_512c_uni_2l_hcgs_75d32b_75d4b_quant3b
+seed = 2233
 use_cuda = True
 multi_gpu = False
 save_gpumem = False
-n_epochs_tr = 24
+n_epochs_tr = 8
 ```
 The section [exp] contains some important fields, such as the output folder (*out_folder*) and the path of the chunk-specific processing script *run_nn.py*. The field *N_epochs_tr* specifies the selected number of training epochs. Other options about using_cuda, multi_gpu, and save_gpumem can be enabled by the user. The field *cmd* can be used to append a command to run the script on a HPC cluster.
 
@@ -187,59 +187,111 @@ The section [exp] contains some important fields, such as the output folder (*ou
 [dataset1]
 data_name = TIMIT_tr
 fea = fea_name=mfcc
-    fea_lst=quick_test/data/train/feats_mfcc.scp
-    fea_opts=apply-cmvn --utt2spk=ark:quick_test/data/train/utt2spk  ark:quick_test/mfcc/train_cmvn_speaker.ark ark:- ark:- | add-deltas --delta-order=2 ark:- ark:- |
-    cw_left=5
-    cw_right=5
-    
+	fea_lst=/home/dkadetot/kaldi/egs/timit/s5/data/train/feats.scp
+	fea_opts=apply-cmvn --utt2spk=ark:/home/dkadetot/kaldi/egs/timit/s5/data/train/utt2spk  ark:/home/dkadetot/kaldi/egs/timit/s5/mfcc/train_cmvn_speaker.ark ark:- ark:- | add-deltas --delta-order=2 ark:- ark:- |
+	cw_left=0
+	cw_right=0
+	
+	fea_name=fbank
+	fea_lst=/home/dkadetot/kaldi/egs/timit/s5/data/train/feats_fbank.scp
+	fea_opts=apply-cmvn --utt2spk=ark:/home/dkadetot/kaldi/egs/timit/s5/data/train/utt2spk  ark:/home/dkadetot/kaldi/egs/timit/s5/fbank/cmvn_train.ark ark:- ark:- | add-deltas --delta-order=0 ark:- ark:- |
+	cw_left=0
+	cw_right=0
+	
+	fea_name=fmllr
+	fea_lst=/home/dkadetot/kaldi/egs/timit/s5/data-fmllr-tri3/train/feats.scp
+	fea_opts=apply-cmvn --utt2spk=ark:/home/dkadetot/kaldi/egs/timit/s5/data-fmllr-tri3/train/utt2spk  ark:/home/dkadetot/kaldi/egs/timit/s5/data-fmllr-tri3/train/_fmllr/cmvn_train.ark ark:- ark:- | add-deltas --delta-order=0 ark:- ark:- |
+	cw_left=5
+	cw_right=5
 lab = lab_name=lab_cd
-    lab_folder=quick_test/dnn4_pretrain-dbn_dnn_ali
-    lab_opts=ali-to-pdf
-    lab_count_file=auto
-    lab_data_folder=quick_test/data/train/
-    lab_graph=quick_test/graph
-    
+	lab_folder=/home/dkadetot/kaldi/egs/timit/s5/exp/dnn4_pretrain-dbn_dnn_ali
+	lab_opts=ali-to-pdf
+	lab_count_file=auto
+	lab_data_folder=/home/dkadetot/kaldi/egs/timit/s5/data/train/
+	lab_graph=/home/dkadetot/kaldi/egs/timit/s5/exp/tri3/graph
+	
+	lab_name=lab_mono
+	lab_folder=/home/dkadetot/kaldi/egs/timit/s5/exp/dnn4_pretrain-dbn_dnn_ali
+	lab_opts=ali-to-phones --per-frame=true
+	lab_count_file=none
+	lab_data_folder=/home/dkadetot/kaldi/egs/timit/s5/data/train/
+	lab_graph=/home/dkadetot/kaldi/egs/timit/s5/exp/mono/graph
 n_chunks = 5
 
 [dataset2]
 data_name = TIMIT_dev
 fea = fea_name=mfcc
-    fea_lst=quick_test/data/dev/feats_mfcc.scp
-    fea_opts=apply-cmvn --utt2spk=ark:quick_test/data/dev/utt2spk  ark:quick_test/mfcc/dev_cmvn_speaker.ark ark:- ark:- | add-deltas --delta-order=2 ark:- ark:- |
-    cw_left=5
-    cw_right=5
-    
+	fea_lst=/home/dkadetot/kaldi/egs/timit/s5/data/dev/feats.scp
+	fea_opts=apply-cmvn --utt2spk=ark:/home/dkadetot/kaldi/egs/timit/s5/data/dev/utt2spk  ark:/home/dkadetot/kaldi/egs/timit/s5/mfcc/dev_cmvn_speaker.ark ark:- ark:- | add-deltas --delta-order=2 ark:- ark:- |
+	cw_left=0
+	cw_right=0
+	
+	fea_name=fbank
+	fea_lst=/home/dkadetot/kaldi/egs/timit/s5/data/dev/feats_fbank.scp
+	fea_opts=apply-cmvn --utt2spk=ark:/home/dkadetot/kaldi/egs/timit/s5/data/dev/utt2spk  ark:/home/dkadetot/kaldi/egs/timit/s5/fbank/cmvn_dev.ark ark:- ark:- | add-deltas --delta-order=0 ark:- ark:- |
+	cw_left=0
+	cw_right=0
+	
+	fea_name=fmllr
+	fea_lst=/home/dkadetot/kaldi/egs/timit/s5/data-fmllr-tri3/dev/feats.scp
+	fea_opts=apply-cmvn --utt2spk=ark:/home/dkadetot/kaldi/egs/timit/s5/data-fmllr-tri3/dev/utt2spk  ark:/home/dkadetot/kaldi/egs/timit/s5/data-fmllr-tri3/dev/_fmllr/cmvn_dev.ark ark:- ark:- | add-deltas --delta-order=0 ark:- ark:- |
+	cw_left=5
+	cw_right=5
 lab = lab_name=lab_cd
-    lab_folder=quick_test/dnn4_pretrain-dbn_dnn_ali_dev
-    lab_opts=ali-to-pdf
-    lab_count_file=auto
-    lab_data_folder=quick_test/data/dev/
-    lab_graph=quick_test/graph
+	lab_folder=/home/dkadetot/kaldi/egs/timit/s5/exp/dnn4_pretrain-dbn_dnn_ali_dev
+	lab_opts=ali-to-pdf
+	lab_count_file=auto
+	lab_data_folder=/home/dkadetot/kaldi/egs/timit/s5/data/dev/
+	lab_graph=/home/dkadetot/kaldi/egs/timit/s5/exp/tri3/graph
+	
+	lab_name=lab_mono
+	lab_folder=/home/dkadetot/kaldi/egs/timit/s5/exp/dnn4_pretrain-dbn_dnn_ali_dev
+	lab_opts=ali-to-phones --per-frame=true
+	lab_count_file=none
+	lab_data_folder=/home/dkadetot/kaldi/egs/timit/s5/data/dev/
+	lab_graph=/home/dkadetot/kaldi/egs/timit/s5/mono/graph
 n_chunks = 1
 
 [dataset3]
 data_name = TIMIT_test
 fea = fea_name=mfcc
-    fea_lst=quick_test/data/test/feats_mfcc.scp
-    fea_opts=apply-cmvn --utt2spk=ark:quick_test/data/test/utt2spk  ark:quick_test/mfcc/test_cmvn_speaker.ark ark:- ark:- | add-deltas --delta-order=2 ark:- ark:- |
-    cw_left=5
-    cw_right=5
-    
+	fea_lst=/home/dkadetot/kaldi/egs/timit/s5/data/test/feats.scp
+	fea_opts=apply-cmvn --utt2spk=ark:/home/dkadetot/kaldi/egs/timit/s5/data/test/utt2spk  ark:/home/dkadetot/kaldi/egs/timit/s5/mfcc/test_cmvn_speaker.ark ark:- ark:- | add-deltas --delta-order=2 ark:- ark:- |
+	cw_left=0
+	cw_right=0
+	
+	fea_name=fbank
+	fea_lst=/home/dkadetot/kaldi/egs/timit/s5/data/test/feats_fbank.scp
+	fea_opts=apply-cmvn --utt2spk=ark:/home/dkadetot/kaldi/egs/timit/s5/data/test/utt2spk  ark:/home/dkadetot/kaldi/egs/timit/s5/fbank/cmvn_test.ark ark:- ark:- | add-deltas --delta-order=0 ark:- ark:- |
+	cw_left=0
+	cw_right=0
+	
+	fea_name=fmllr
+	fea_lst=/home/dkadetot/kaldi/egs/timit/s5/data-fmllr-tri3/test/feats.scp
+	fea_opts=apply-cmvn --utt2spk=ark:/home/dkadetot/kaldi/egs/timit/s5/data-fmllr-tri3/test/utt2spk  ark:/home/dkadetot/kaldi/egs/timit/s5/data-fmllr-tri3/test/_fmllr/cmvn_test.ark ark:- ark:- | add-deltas --delta-order=0 ark:- ark:- |
+	cw_left=5
+	cw_right=5
 lab = lab_name=lab_cd
-    lab_folder=quick_test/dnn4_pretrain-dbn_dnn_ali_test
-    lab_opts=ali-to-pdf
-    lab_count_file=auto
-    lab_data_folder=quick_test/data/test/
-    lab_graph=quick_test/graph
-    
+	lab_folder=/home/dkadetot/kaldi/egs/timit/s5/exp/dnn4_pretrain-dbn_dnn_ali_test
+	lab_opts=ali-to-pdf
+	lab_count_file=auto
+	lab_data_folder=/home/dkadetot/kaldi/egs/timit/s5/data/test/
+	lab_graph=/home/dkadetot/kaldi/egs/timit/s5/exp/tri3/graph
+	
+	lab_name=lab_mono
+	lab_folder=/home/dkadetot/kaldi/egs/timit/s5/exp/dnn4_pretrain-dbn_dnn_ali_test
+	lab_opts=ali-to-phones --per-frame=true
+	lab_count_file=none
+	lab_data_folder=/home/dkadetot/kaldi/egs/timit/s5/data/test/
+	lab_graph=/home/dkadetot/kaldi/egs/timit/s5/exp/mono/graph
 n_chunks = 1
 ```
 
 The config file contains a number of sections (*[dataset1]*, *[dataset2]*, *[dataset3]*,...) that describe all the corpora used for the ASR experiment.  The fields on the *[dataset\*]* section describe all the features and labels considered in the experiment.
-The features, for instance, are specified in the field *fea:*, where *fea_name* contains the name given to the feature, *fea_lst* is the list of features (in the scp Kaldi format), *fea_opts* allows users to specify how to process the features (e.g., doing CMVN or adding the derivatives), while *cw_left* and *cw_right* set the characteristics of the context window (i.e., number of left and right frames to append). Note that the current version of the PyTorch-Kaldi toolkit supports the definition of multiple features streams. Indeed, as shown in *cfg/TIMIT_baselines/TIMIT_mfcc_fbank_fmllr_liGRU_best.cfg* multiple feature streams (e.g., mfcc, fbank, fmllr) are employed.
+The features, for instance, are specified in the field *fea:*, where *fea_name* contains the name given to the feature, *fea_lst* is the list of features (in the scp Kaldi format), *fea_opts* allows users to specify how to process the features (e.g., doing CMVN or adding the derivatives), while *cw_left* and *cw_right* set the characteristics of the context window (i.e., number of left and right frames to append). Note that the current version of the PyTorch-Kaldi toolkit supports the definition of multiple features streams.
 
 Similarly, the *lab* section contains some sub-fields.  For instance, *lab_name* refers to the name given to the label,  while *lab_folder* contains the folder where the alignments generated by the Kaldi recipe are stored.  *lab_opts* allows the user to specify some options on the considered alignments. For example  *lab_opts="ali-to-pdf"* extracts standard context-dependent phone-state labels, while *lab_opts=ali-to-phones --per-frame=true* can be used to extract monophone targets. *lab_count_file* is used to specify the file that contains the counts of the considered phone states. 
-These counts are important in the forward phase, where the posterior probabilities computed by the neural network are divided by their priors. PyTorch-Kaldi allows users to both specify an external count file or to automatically retrieve it (using *lab_count_file=auto*). Users can also specify *lab_count_file=none* if the count file is not strictly needed, e.g., when the labels correspond to an output not used to generate the posterior probabilities used in the forward phase (see for instance the monophone targets in *cfg/TIMIT_baselines/TIMIT_MLP_mfcc.cfg*). *lab_data_folder*, instead, corresponds to the data folder created during the Kaldi data preparation. It contains several files, including the text file eventually used for the computation of the final WER. The last sub-field *lab_graph* is the path of the Kaldi graph used to generate the labels.  
+These counts are important in the forward phase, where the posterior probabilities computed by the neural network are divided by their priors. PyTorch-Kaldi allows users to both specify an external count file or to automatically retrieve it (using *lab_count_file=auto*). Users can also specify *lab_count_file=none* if the count file is not strictly needed, e.g., when the labels correspond to an output not used to generate the posterior probabilities used in the forward phase, instead, corresponds to the data folder created during the Kaldi data preparation. It contains several files, including the text file eventually used for the computation of the final PER/WER. The last sub-field *lab_graph* is the path of the Kaldi graph used to generate the labels.  
 
 The full dataset is usually large and cannot fit the GPU/RAM memory. It should thus be split into several chunks.  PyTorch-Kaldi automatically splits the dataset into the number of chunks specified in *N_chunks*. The number of chunks might depend on the specific dataset. In general, we suggest processing speech chunks of about 1 or 2 hours (depending on the available memory).
 
@@ -271,42 +323,55 @@ Similarly,*batch_size_valid* and *max_seq_length_valid* specify the number of ex
 
 ```
 [architecture1]
-arch_name = MLP_layers1
-arch_proto = proto/MLP.proto
+arch_name = LSTM_cudnn_layers
+arch_proto = proto/LSTM.proto
 arch_library = neural_networks
-arch_class = MLP
+arch_class = LSTM
 arch_pretrain_file = none
 arch_freeze = False
-arch_seq_model = False
-dnn_lay = 1024,1024,1024,1024,N_out_lab_cd
-dnn_drop = 0.15,0.15,0.15,0.15,0.0
-dnn_use_laynorm_inp = False
-dnn_use_batchnorm_inp = False
-dnn_use_batchnorm = True,True,True,True,False
-dnn_use_laynorm = False,False,False,False,False
-dnn_act = relu,relu,relu,relu,softmax
-arch_lr = 0.08
+arch_seq_model = True
+lstm_lay = 512,512
+lstm_drop = 0.0,0.0
+lstm_quant = True
+param_quant = 3,3
+lstm_use_laynorm_inp = False
+lstm_use_batchnorm_inp = False
+lstm_use_laynorm = False,False
+lstm_use_batchnorm = True,True
+lstm_bidir = False
+lstm_act = tanh,tanh
+lstm_orthinit = True
+arch_lr = 0.0016
 arch_halving_factor = 0.5
 arch_improvement_threshold = 0.001
-arch_opt = sgd
+arch_opt = rmsprop
 opt_momentum = 0.0
+opt_alpha = 0.95
+opt_eps = 1e-8
+opt_centered = False
 opt_weight_decay = 0.0
-opt_dampening = 0.0
-opt_nesterov = False
+out_folder = 
+lstm_hcgs = True
+hcgsx_block = 32,4
+hcgsx_drop = 75,75
+hcgsh_block = 32,4
+hcgsh_drop = 75,75
 ```
 
-The sections *[architecture\*]* are used to specify the architectures of the neural networks involved in the ASR experiments. The field *arch_name* specifies the name of the architecture. Since different neural networks can depend on a different set of hyperparameters, the user has to add the path of a proto file that contains the list of hyperparameters into the field *proto*.  For example,  the prototype file for a standard MLP model contains the following fields:
+The sections *[architecture\*]* are used to specify the architectures of the neural networks involved in the ASR experiments. The field *arch_name* specifies the name of the architecture. The addition of *hcgs* option correspond hcgs block size for the first and second tier and the percentage drop of the connections in first and second tier. The *lstm_quant* and *param_quant* correspond to the quantization options for the network.
+
+Since different neural networks can depend on a different set of hyperparameters, the user has to add the path of a proto file that contains the list of hyperparameters into the field *proto*.  For example,  the prototype file for a standard LSTM model contains the following fields:
 ```
 [proto]
-library=path
-class=MLP
-dnn_lay=str_list
-dnn_drop=float_list(0.0,1.0)
-dnn_use_laynorm_inp=bool
-dnn_use_batchnorm_inp=bool
-dnn_use_batchnorm=bool_list
-dnn_use_laynorm=bool_list
-dnn_act=str_list
+lstm_lay=str_list
+lstm_drop=float_list(0.0,1.0)
+lstm_use_laynorm_inp=bool
+lstm_use_batchnorm_inp=bool
+lstm_use_laynorm=bool_list
+lstm_use_batchnorm=bool_list
+lstm_bidir=bool
+lstm_act=str_list
+lstm_orthinit=bool
 ```
 
 Similarly to the other prototype files, each line defines a hyperparameter with the related value type. All the hyperparameters defined in the proto file must appear into the global configuration file under the corresponding *[architecture\*]* section.
@@ -329,35 +394,6 @@ model = out_dnn1=compute(MLP_layers1,mfcc)
 The way all the various features and architectures are combined is specified in this section with a very simple and intuitive meta-language.
 The field *model:* describes how features and architectures are connected to generate as output a set of posterior probabilities. The line *out_dnn1=compute(MLP_layers,mfcc)* means "*feed the architecture called MLP_layers1 with the features called mfcc and store the output into the variable out_dnn1*”.
 From the neural network output *out_dnn1* the error and the loss functions are computed using the labels called *lab_cd*, that have to be previously defined into the *[datasets\*]* sections. The *err_final* and *loss_final* fields are mandatory subfields that define the final output of the model.
-
-A much more complex example (discussed here just to highlight the potentiality of the toolkit) is reported in *cfg/TIMIT_baselines/TIMIT_mfcc_fbank_fmllr_liGRU_best.cfg*:
-```    
-[model]
-model_proto=proto/model.proto
-model:conc1=concatenate(mfcc,fbank)
-      conc2=concatenate(conc1,fmllr)
-      out_dnn1=compute(MLP_layers_first,conc2)
-      out_dnn2=compute(liGRU_layers,out_dnn1)
-      out_dnn3=compute(MLP_layers_second,out_dnn2)
-      out_dnn4=compute(MLP_layers_last,out_dnn3)
-      out_dnn5=compute(MLP_layers_last2,out_dnn3)
-      loss_mono=cost_nll(out_dnn5,lab_mono)
-      loss_mono_w=mult_constant(loss_mono,1.0)
-      loss_cd=cost_nll(out_dnn4,lab_cd)
-      loss_final=sum(loss_cd,loss_mono_w)     
-      err_final=cost_err(out_dnn4,lab_cd)
-```    
-In this case we first concatenate mfcc, fbank, and fmllr features and we then feed a MLP. The output of the MLP is fed into the a recurrent neural network (specifically a Li-GRU model). We then have another MLP layer (*MLP_layers_second*) followed by two softmax classifiers (i.e., *MLP_layers_last*, *MLP_layers_last2*). The first one estimates standard context-dependent states, while the second estimates monophone targets. The final cost function is a weighted sum between these two predictions. In this way we implement the monophone regularization, that turned out to be useful to improve the ASR performance.
-
-The full model can be considered as a single big computational graph, where all the basic architectures used in the [model] section are jointly trained. For each mini-batch, the input features are propagated through the full model and the cost_final is computed using the specified labels. The gradient of the cost function with respect to all the learnable parameters of the architecture is then computed. All the parameters of the employed architectures are then updated together with the algorithm specified in the *[architecture\*]* sections.
-```    
-[forward]
-forward_out = out_dnn1
-normalize_posteriors = True
-normalize_with_counts_from = lab_cd
-save_out_file = True
-require_decoding = True
-```    
 
 The section forward first defines which is the output to forward (it must be defined into the model section).  if *normalize_posteriors=True*, these posterior are normalized by their priors (using a count file).  If *save_out_file=True*, the posterior file (usually a very big ark file) is stored, while if *save_out_file=False* this file is deleted when not needed anymore.
 The *require_decoding* is a boolean that specifies if we need to decode the specified output.  The field *normalize_with_counts_from* set which counts using to normalize the posterior probabilities.
