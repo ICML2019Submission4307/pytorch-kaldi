@@ -156,7 +156,7 @@ steps/align_fmllr.sh --nj 10 data/test_clean data/lang exp/tri4b exp/tri4b_ali_t
 ```
 
 
-## Description of the configuration files:
+## Description of the configuration files
 There are two types of config files (global and chunk-specific cfg files). They are both in *INI* format and are read, processed, and modified with the *configparser* library of python. 
 The global file contains several sections, that specify all the main steps of a speech recognition experiments (training, validation, forward, and decoding).
 The structure of the config file is described in a prototype file (see for instance *proto/global.proto*) that not only lists all the required sections and fields but also specifies the type of each possible field. For instance, *N_ep=int(1,inf)* means that the fields *N_ep* (i.e, number of training epochs) must be an integer ranging from 1 to inf. Similarly, *lr=float(0,inf)* means that the lr field (i.e., the learning rate) must be a float ranging from 0 to inf. Any attempt to write a config file not compliant with these specifications will raise an error.
