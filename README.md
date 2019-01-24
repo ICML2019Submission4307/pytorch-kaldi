@@ -425,15 +425,3 @@ norm_vars = False
 ```    
 
 The decoding section reports parameters about decoding, i.e. the steps that allows one to pass from a sequence of the context-dependent probabilities provided by the DNN into a sequence of words. The field *decoding_script_folder* specifies the folder where the decoding script is stored. The *decoding script* field is the script used for decoding (e.g., *decode_dnn.sh*) that should be in the *decoding_script_folder* specified before.  The field *decoding_proto* reports all the parameters needed for the considered decoding script. 
-
-To make the code more flexible, the config parameters can also be specified within the command line. For example, you can run:
-```    
- python run_exp.py quick_test/example_newcode.cfg --optimization,lr=0.01 --batches,batch_size=4
-```    
-The script will replace the learning rate in the specified cfg file with the specified lr value. The modified config file is then stored into *out_folder/config.cfg*.
-
-The script *run_exp.py* automatically creates chunk-specific config files, that are used by *run_nn.py* to perform a single chunk training. The structure of chunk-specific cfg files is very similar to that of the global one. The main difference is a field *to_do={train, valid, forward}* that specifies the type of processing to on the features chunk specified in the field *fea*.
-
-*Why proto files?*
-Different neural networks, optimization algorithms, and HMM decoders might depend on a different set of hyperparameters. To address this issue, our current solution is based on the definition of some prototype files (for global, chunk, architecture config files). In general, this approach allows a more transparent check of the fields specified into the global config file. Moreover, it allows users to easily add new parameters without changing any line of the python code.
-For instance, to add a user-defined model, a new proto file (e.g., *user-model.prot*o) that specifies the hyperparameter must be written. Then, the user should only write a class  (e.g., user-model in *neural_networks.py*) that implements the architecture).
